@@ -1,0 +1,165 @@
+#====================
+# Global funtions
+#====================
+wstart(){
+    export XDG_CURRENT_DESKTOP=sway 
+    export XCURSOR_THEME=MacOSX
+    export XCURSOR_SIZE=28
+    WLR_DRM_DEVICES=/dev/dri/card1 dbus-run-session sway
+}
+nvim() {
+    command nvim \
+        --cmd "lua vim.opt.rtp:prepend(\"${ZAPP_PATH}/config/nvim\")" \
+        -u "${ZAPP_PATH}/config/nvim/init.lua" "$@"
+}
+van() {
+    local tempfile
+    local vandir="${XDG_CACHE_HOME}/van"
+
+    mkdir "$vandir" &> /dev/null
+    cleanup() {
+        rm -r "$vandir" &> /dev/null
+    }
+    
+    if (( $# == 1 )) ; then
+        tempfile="$vandir"/"$1"
+        man "$1" > "$tempfile" 2> /dev/null || { cleanup ; return 1 ; }
+        nvim -c 'set ft=man' "$tempfile" || { cleanup ; return 1 ; }
+    elif (( $# == 2 )) ; then
+        tempfile="$vandir"/"$2"
+        man "$1" "$2" > "$tempfile" 2> /dev/null || { cleanup ; return 1 ; }
+        nvim -c 'set ft=man' "$tempfile" || { cleanup ; return 1 ; }
+    else
+        return 1
+    fi
+
+    cleanup
+    return 0
+
+}
+drun(){
+    command rofi -show drun \
+        -config ${ZAPP_PATH}/config/rofi/drun/config.rasi
+}
+yt () {
+    command -v yt-dlp &> /dev/null || \
+        { printf "%s\n" "yt-dlp not found.." ; return ; } 
+    [[ "$*" == "" ]] && { printf "%s\n" "Provide arguments.." ; return ;}
+
+    local OUTPUT_DIR="${HOME}/Videos/yt-dlp"
+    local OUTPUT_FORMAT_PLAYLIST="${OUTPUT_DIR}\
+/%(playlist)s/%(playlist_index)s - %(title)s.%(ext)s"
+    local OUTPUT_FORMAT_NOPLAYLIST="${OUTPUT_DIR}/%(title)s.%(ext)s"
+
+    if [[ "$1" == "https://www.youtube.com/playlist"* ]] ; then
+        yt-dlp \
+        --sponsorblock-mark default \
+        --remux-video mp4 \
+        --audio-quality 10 \
+        --restrict-filenames \
+        -o "$OUTPUT_FORMAT_PLAYLIST" \
+        "$@"
+    else
+        yt-dlp \
+        --sponsorblock-mark default \
+        --remux-video mp4 \
+        --audio-quality 10 \
+        --restrict-filenames \
+        -o "$OUTPUT_FORMAT_NOPLAYLIST" \
+        "$@"
+    fi
+}
+sharpboard () {
+    local EWW="${ZAPP_PATH}"/config/eww/eww
+    local CONFIG_DIR="${ZAPP_PATH}"/config/eww/sharpboard
+    local SCRIPT_DIR="${ZAPP_PATH}"/config/eww/scripts
+    local CACHE_DIR="${XDG_CACHE_HOME:-$HOME/.cache}/ZAPP"
+
+    is_open(){
+        while IFS=':' read -r win_id win_name ; do
+            [[ "${win_id}" == "sharpboard" ]] && return 0
+        done < <( "$EWW" -c "$CONFIG_DIR" active-windows 2> /dev/null )
+        return 1
+    }
+
+    if is_open ; then
+        "$EWW" -c "$CONFIG_DIR" close sharpboard && printf "closed\n"
+    else
+        "$EWW" -c "$CONFIG_DIR" open sharpboard && printf "opened\n"
+        (
+            # wait for it to open 
+            while ! is_open ; do 
+                sleep 0.1
+            done
+            
+            # immidately update var
+            [[ -f "$CACHE_DIR"/maximainit ]] && \
+                "$EWW" -c "$CONFIG_DIR" update MAXIMA="$(< "$CACHE_DIR"/maximainit )"
+
+            # bt scan on
+            bluetoothctl -t 10 scan on  &> /dev/null &
+            local bt_PID=$!
+ 
+            # update loop
+            while : ; do 
+                # stop when it closes
+                is_open || \
+                    { [[ "$(ps -p "$bt_PID" -o  comm=)" == "bluetoothctl" ]] && \
+                        kill -9 "$bt_PID" &> /dev/null ; break ; }
+
+                MAXIMA="$( "${SCRIPT_DIR}"/maxima )"
+
+                "$EWW" -c "$CONFIG_DIR" update MAXIMA="${MAXIMA}"
+            done
+        ) &
+    fi
+}
+screenshot() {
+    shotpath="${HOME}/Pictures/Screenshots/$(date +'%Y-%m-%d_%H-%M-%S').png"
+    mkdir -p "$(dirname "$shotpath")"
+
+    if [[ "$1" = "o" ]] ; then
+        grim -l 0 \
+        -g "0,0 1920x1080" \
+        "$shotpath" || return
+    elif [[ "$1" = "d" ]] ; then
+        grim -l 0 \
+        -g "$(slurp -o)" \
+        "$shotpath" || return
+    else
+        exit 1
+    fi
+
+    wl-copy < "$shotpath"
+    notify-send -i "$shotpath" "Screen Grabbed"
+}
+screen_record() {
+    videopath="${HOME}/Videos/Screenrecordings/$(date +'%Y-%m-%d_%H-%M-%S').mp4"
+    mkdir -p "$(dirname "$videopath")"
+
+    if [[ "$1" = "o" ]] ; then
+        # Gpu encoder does not work for me
+        gpu-screen-recorder \
+        -w screen \
+        -f 60 \
+        -a default_output \
+        -encoder cpu \
+        -ac aac \
+        -o "$videopath" || return
+    elif [[ "$1" = "d" ]] ; then
+        gpu-screen-recorder \
+        -w region \
+        -region "$(slurp -f "%wx%h+%x+%y")" \
+        -f 60 \
+        -a default_output \
+        -encoder cpu \
+        -ac aac \
+        -o "$videopath" || return
+    else 
+        exit 1
+    fi
+    notify-send -i "${ThemePath}/Theme/icons/monitor.png"  "Screen Cliped!" 
+    # freedesktop standerd file transfer mimetype
+    # uses urls, used in drag and droping
+    wl-copy --type "text/uri-list" "file://${videopath}"
+}

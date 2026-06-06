@@ -1,0 +1,20 @@
+#!/usr/bin/env bash
+shopt -s nullglob extglob
+
+command -v chafa > /dev/null 2>&1 || exit 1
+
+# In microseconds
+TICK_DELAY=016666 # 1/60; 60 fps
+# Although we will never be able to run it this fast 
+# bash is too slow. We gonna have to skip some frames.
+
+FRAMES=( "${ZAPP_PATH}"/config/eww/scripts/animations/eyes/frames/* )
+FRAME_COUNT="${#FRAMES[@]}"
+
+# Total microseconds
+REALTIME_MS="${EPOCHREALTIME/.}"
+# This number goes up by one, every TICK_DELAY microseconds
+TICK="$(( REALTIME_MS / TICK_DELAY ))"
+
+CURRENT_FRAME="$(( TICK % FRAME_COUNT ))"
+printf "%s" "$( < "${FRAMES[CURRENT_FRAME]}" )"

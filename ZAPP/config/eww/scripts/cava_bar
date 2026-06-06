@@ -1,0 +1,31 @@
+#!/usr/bin/env bash
+
+TIMER_START=0
+SLEEP_TIMER=5
+CHARS=("▁" "▂" "▃" "▄" "▅" "▆" "▇" "█")
+
+while IFS=';' read -ra BARS ; do 
+    NOW="$(date "+%s")" 
+    ALL_ZERO=1
+
+    for bar in "${BARS[@]}" ; do 
+        [[ "$bar" != '0' ]] && ALL_ZERO=0 && break
+    done
+
+    if (( ALL_ZERO )) ; then 
+        (( TIMER_START == 0 )) && TIMER_START="$NOW"
+        if (( NOW - TIMER_START >= SLEEP_TIMER )) ; then 
+            printf "\n󰝛\n"
+            continue
+        fi
+    else 
+        TIMER_START=0
+    fi
+
+    for bar in "${BARS[@]}" ; do 
+        printf "%s" "${CHARS[bar]}"
+    done
+    printf "|󰝚\n"
+done < <(cava -p "${ZAPP_PATH}"/config/eww/bar/cava_config)
+exit 0
+

@@ -1,0 +1,22 @@
+[[plugin.deps]]
+use = "imsi32/yatline"
+rev = "c5d4b48"
+hash = "e6e98d12b1648d1894c2b560d85eeaa7"
+
+[[plugin.deps]]
+use = "yazi-rs/plugins:full-border"
+rev = "be524fb"
+hash = "7b625412411be411153886894d9acaf"
+
+[[plugin.deps]]
+use = "simla33/ucp"
+rev = "a4b5ce1"
+hash = "e64d13d729d3a22f8c62893411328c79"
+
+[[plugin.deps]]
+use = "boydaihungst/mediainfo"
+rev = "4f80288"
+hash = "daf12bd7eb26044a8a5f41eeb369c27a"
+
+[flavor]
+deps = []

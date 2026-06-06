@@ -1,0 +1,18 @@
+#!/usr/bin/env bash
+# usage: <log|fail|fatal> <appname> <text>
+log() {
+    printf "%b[$1]\e[0m %s\n" "\e[32m" "$2"
+}
+fail() {
+    printf "%b[$1]\e[0m %s\n" "\e[35m" "$2" >&2
+    return 1
+}
+fatal() {
+    printf "%b[$1]\e[0m %s\n" "\e[31m" "$2" 1>&2
+    return 1
+}
+case "$1" in 
+    log) log "$2" "$3" ;;
+    fail) fail "$2" "$3" ;;
+    fatal) fatal "$2" "$3" ;;
+esac

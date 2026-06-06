@@ -1,0 +1,279 @@
+(defpoll MINIMA
+    :interval "1s"
+    '../scripts/minima'
+)
+(deflisten VISUALIZER
+    '../scripts/cava_bar'
+)
+(defwindow bar
+    :monitor 0
+    :geometry (geometry
+        :x "0%"
+        :y "0px"
+        :width "100%"
+        :anchor "top center"
+    )
+    :stacking "fg"
+    :exclusive true
+    (box
+        :class "main-outer"
+        (centerbox
+            :class "main-inner"
+            :orientation "h"
+            (left)
+            (middle)
+            (right)
+        )
+    )
+)
+(defwidget middle []
+    "" 
+)
+(defwidget left []
+    (box
+        :space-evenly false
+        :spacing 12
+        :halign "start"
+        (box
+            :space-evenly false
+            :spacing 6
+            :halign "start"
+            (label
+                :class "${MINIMA.sway_bs.name == 'resize' ? 'mode-r' : 'mode-n' }"
+                :text "${MINIMA.sway_bs.name == 'resize' ? '[R]' : '[N]' }"
+            )
+            (for wp in "${jq(MINIMA,'.sway_wp | sort_by(.num)')}" 
+                (eventbox
+                    :class "wp-outer"
+                    (button
+                        :class "${jq(wp,'
+                        if .focused then 
+                            "wp wp-focused"
+                        elif .urgent then 
+                            "wp wp-urgent"
+                        else 
+                            "wp"
+                        end
+                        ','r')}"
+                        :onclick "swaymsg workspace ${wp.num}"
+                        "${wp.num}"
+                    )
+                )
+            )
+        )
+        (label
+            :class "fw"
+            :text "${MINIMA.sway_fw}"
+        )
+    ) 
+)
+(defwidget right []
+    (box
+        :space-evenly false
+        :spacing 6
+        :halign "end"
+        (cpu)
+        (temp)
+        (memory)
+        (storage)
+        (brightness)
+        (battery)
+        (network)
+        (bluetooth)
+        (visualizer)
+        (audio)
+        (time)
+    )
+)
+
+(defwidget cpu []
+    (eventbox
+        :class "cpu-outer element-outer"
+        (box
+            :class "cpu-inner element-inner"
+            "${round(EWW_CPU.avg,1)}%|"
+        )
+    )
+)
+(defwidget temp []
+    (eventbox
+        :class "temp-outer element-outer"
+        (box
+            :class "temp-inner element-inner"
+            "${jq(EWW_TEMPS,'
+            to_entries[0].value | tonumber |
+            if . <= 40 then
+                tostring + "°C|"
+            elif . <= 60 then
+                tostring + "°C|"
+            elif . <= 100 then
+                tostring + "°C|"
+            else
+                tostring + "°C"
+            end'
+            ,"r")}"
+        )
+    )
+)
+(defwidget memory []
+    (eventbox
+        :class "memory-outer element-outer"
+        (box
+            :class "memory-inner element-inner"
+            "${round(EWW_RAM.used_mem_perc,1)}%|"
+        )
+    )
+)
+(defwidget storage []
+    (eventbox
+        :class "storage-outer element-outer"
+        (box
+            :class "storage-inner element-inner"
+            "${round(EWW_DISK["/"].used_perc,1)}%|󰝰"
+        )
+    )
+)
+(defwidget brightness []
+    (eventbox
+        :class "brightness-outer element-outer"
+        (box
+            :class "brightness-inner element-inner"
+            "${jq(MINIMA,'
+            if .brightness != "null" then 
+                .brightness / 1000 | ceil | tostring | split(".")[0] | . + "%|󰖨"
+            else 
+                "null"
+            end
+            ','r')}"
+        )
+    )
+)
+(defwidget battery []
+    (eventbox
+        :class "battery-outer element-outer"
+        (box
+            :class "battery-inner element-inner"
+            "${jq(EWW_BATTERY,'
+            to_entries[0].value |
+            if .status == "Full" then
+                .capacity | tostring + "%|"
+            elif .status == "Charging" then
+                .capacity | tostring + "%|"
+            elif .status == "Discharging" then 
+                if .capacity <= 20 then 
+                    .capacity | tostring + "%|"
+                elif .capacity <= 40 then 
+                    .capacity | tostring + "%|"
+                elif .capacity <= 60 then 
+                    .capacity | tostring + "%|"
+                elif .capacity <= 80 then 
+                    .capacity | tostring + "%|"
+                elif .capacity <= 100 then 
+                    .capacity | tostring + "%|"
+                end
+            else
+                .capacity | tostring + "%"
+            end
+            ','r')}"
+        )
+    )
+)
+(defwidget network []
+    (eventbox
+        :class "network-outer element-outer"
+        (box
+            :class "network-inner element-inner"
+            "${jq(EWW_NET,'
+            (
+            to_entries | 
+            sort_by(.value.NET_DOWN) | 
+            reverse | 
+            .[0].value.NET_DOWN / 1024 | floor | tostring | split(".")[0]
+            + " KiB||"
+            ),
+
+            (
+            to_entries |
+            sort_by(.value.NET_UP) |
+            reverse |
+            .[0].value.NET_UP / 1024 | floor | tostring | split(".")[0]
+            + " KiB|"
+            )
+            ','r')}"
+        )
+    )
+)
+(defwidget bluetooth []
+    (eventbox
+        :class "bluetooth-outer element-outer"
+        (box
+            :class "bluetooth-inner element-inner"
+            "${jq(MINIMA.bt_devices_connected,'
+            if . <= 0 then 
+                tostring | "[" + . + "]|󰂯" 
+            else 
+                tostring | "[" + . + "]|󰂱" 
+            end
+            ','r')}"
+        )
+    )
+)
+(defwidget visualizer []
+    (eventbox
+        :class "visualizer-outer element-outer"
+        (box
+            :class "visualizer-inner element-inner"
+            "${VISUALIZER}"
+        )
+   ) 
+)
+(defwidget audio []
+    (eventbox
+        :class "audio-outer element-outer"
+        (box
+            :class "audio-inner element-inner"
+            "${jq(MINIMA,'
+            if .vol_sink != "null" then
+                if .is_mute_sink then 
+                    .vol_sink * 100 | floor | tostring | split(".")[0] | 
+                    . + "%|󰝟|"
+                else
+                    if .vol_sink == 0.0 then 
+                        .vol_sink * 100 | floor | tostring | split(".")[0] | 
+                        . + "%|󰖁|"
+                    elif .vol_sink <= 0.3 then 
+                        .vol_sink * 100 | floor | tostring | split(".")[0] | 
+                        . + "%|󰕿|"
+                    elif .vol_sink <= 0.6 then 
+                        .vol_sink * 100 | floor | tostring | split(".")[0] | 
+                        . + "%|󰖀|"
+                    else 
+                        .vol_sink * 100 | floor | tostring | split(".")[0] | 
+                        . + "%|󰕾|"
+                    end
+                end 
+            else 
+                "null "
+            end,
+            if .vol_source != "null" then
+                if .is_mute_source then 
+                    .vol_source * 100 | floor | tostring | split(".")[0] | . + "%|󰍭"
+                else
+                    .vol_source * 100 | floor | tostring | split(".")[0] | . + "%|󰍬"
+                end
+            else 
+                "null"
+            end
+            ','r')}"
+        )
+    )
+)
+(defwidget time []
+    (eventbox
+        :class "time-outer element-outer"
+        (box
+            :class "time-inner element-inner"
+            "${MINIMA.time}"
+        )
+    )
+)

@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+# usage: <pidfile> <logfille> <commands ...>
+
+pf="$1" ; lg="$2" ; shift 2
+[[ -f "$pf" ]] && exit 1
+
+setsid "$@" > "$lg" 2>&1 < /dev/null &
+printf "%d" $! > "$pf"
+

@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+# usage: <pidfile ...>
+for f in "$@" ; do 
+    [[ -f "$f" ]] && \
+        { 
+            pkill -KILL --pidfile "$f" > /dev/null 2>&1
+            rm -f "$f" > /dev/null 2>&1 
+        } 
+done
+
+

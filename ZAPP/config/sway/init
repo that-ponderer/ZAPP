@@ -1,0 +1,58 @@
+#!/usr/bin/env bash
+shopt -s nullglob extglob
+#====================
+HELPERS="${ZAPP_PATH}"/config/helpers
+PID="${ZAPP_PATH}"/config/current/var/pid
+LOG="${ZAPP_PATH}"/config/current/var/log
+#====================
+# dbus environment 
+#====================
+dbus-update-activation-environment \
+    WAYLAND_DISPLAY \
+    DISPLAY \
+    XDG_CURRENT_DESKTOP \
+    SWAYSOCK \
+    I3SOCK \
+    XCURSOR_SIZE \
+    XCURSOR_THEME
+#====================
+# Reset daemons
+#====================
+rm -f "${PID}"/*
+#====================
+# Audio stack 
+#====================
+"${HELPERS}"/daemonize \
+    "${PID}"/pipewire.pid "${LOG}"/pipewire.log \
+    pipewire
+
+"${HELPERS}"/daemonize \
+    "${PID}"/pipewire-pulse.pid "${LOG}"/pipewire-pulse.log \
+    pipewire-pulse 
+
+"${HELPERS}"/daemonize \
+    "${PID}"/wireplumber.pid "${LOG}"/wireplumber.log \
+    wireplumber
+#====================
+# Wallpaper 
+#====================
+"${HELPERS}"/daemonize \
+    "${PID}"/swaybg.pid "${LOG}"/swaybg.log \
+    swaybg -m fill -i "${ZAPP_PATH}"/config/current/wallpaper.?(jpg|png|jpeg)
+#====================
+# Bar 
+#====================
+"${ZAPP_PATH}"/config/eww/eww -c "${ZAPP_PATH}"/config/eww/bar open bar &
+#====================
+# MPD 
+#====================
+MPD_CONFIG_RAW="$(< "${ZAPP_PATH}"/config/mpd/mpd.conf )"
+MPD_CONFIG="${MPD_CONFIG_RAW//'{HOME}'/${HOME}}"
+MPD_CONFIG="${MPD_CONFIG//'{ZAPP_PATH}'/${ZAPP_PATH}}"
+"${HELPERS}"/daemonize \
+    "${PID}"/mpd.pid "${LOG}"/mpd.log \
+    mpd <( printf '%s' "$MPD_CONFIG" )
+#====================
+# Misc 
+#====================
+brightnessctl s "5%"

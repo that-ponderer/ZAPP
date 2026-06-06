@@ -1,0 +1,18 @@
+#!/usr/bin/env bash
+shopt -s nullglob extglob
+
+command -v chafa > /dev/null 2>&1 || exit 1
+
+# In microseconds
+TICK_DELAY=033333 # 1/30; 30 fps
+
+FRAMES=( "${ZAPP_PATH}"/config/eww/scripts/animations/brain/frames/* )
+FRAME_COUNT="${#FRAMES[@]}"
+
+# Total microseconds
+REALTIME_MS="${EPOCHREALTIME/.}"
+# This number goes up by one, every TICK_DELAY microseconds
+TICK="$(( REALTIME_MS / TICK_DELAY ))"
+
+CURRENT_FRAME="$(( TICK % FRAME_COUNT ))"
+printf "%s" "$( < "${FRAMES[CURRENT_FRAME]}")"

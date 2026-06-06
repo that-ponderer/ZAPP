@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+
+while IFS=';' read -ra BARS ; do 
+    printf "["
+    for idx in "${!BARS[@]}" ; do 
+        printf "%s" "${BARS[idx]}"
+        (( idx == ( ${#BARS[@]} - 1 ) )) || \
+        printf ","
+    done
+    printf "]"
+    printf "\n"
+done < <(cava -p "${ZAPP_PATH}"/config/eww/sharpboard/cava_config)
+exit 0
+

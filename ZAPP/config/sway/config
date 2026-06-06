@@ -1,0 +1,202 @@
+#====================
+# Variables
+#====================
+## nav --------------
+set $MOD Mod4
+set $LEFT h
+set $DOWN j
+set $UP k
+set $RIGHT l
+## apps -------------
+set $TERM kitty
+set $menu wmenu-run
+set $BROWSER helium-browser
+set $LAUNCHER zsh -c 'drun'
+set $SS_OUTPUT zsh -c "screenshot o"
+set $SS_DYNAMIC zsh -c "screenshot d"
+set $SHARPBOARD zsh -c "sharpboard"
+## colors -----------
+set $COL0	#1e1e2e
+set $COL1   #f38ba8
+set $COL2	#a6e3a1
+set $COL3	#fab387
+set $COL4	#89b4fa
+set $COL5	#cba6f7
+set $COL6	#74c7ec
+set $COL7	#bac2de
+set $COL8	#6c7086
+set $COL9	#eba0ac
+set $COL10	#94e2d5
+set $COL11	#f9e2af
+set $COL12	#b4befe
+set $COL13	#f5c2e7
+set $COL14  #89dceb
+set $COL15	#cdd6f4
+
+
+set $GRAY11	#cdd6f4
+set $GRAY10	#bac2de
+set $GRAY9	#a6adc8
+set $GRAY8	#9399b2
+set $GRAY7	#7f849c
+set $GRAY6	#6c7086
+set $GRAY5	#585b70
+set $GRAY4	#45475a
+set $GRAY3	#313244
+set $GRAY2	#1e1e2e
+set $GRAY1	#181825
+set $GRAY0	#11111b
+
+#====================
+# Autostart
+#====================
+exec ${ZAPP_PATH}/config/sway/init
+#====================
+# Outputs
+#====================
+output "eDP-1" {
+    mode 1920x1080@143.998Hz
+}
+#====================
+# Input
+#====================
+input type:touchpad {
+    dwt enabled
+    natural_scroll enabled
+    pointer_accel 0.5
+}
+
+input type:keyboard {
+    xkb_options "caps:escape"
+}
+#====================
+# Looks 
+#====================
+client.focused $COL4 $COL4 $COL0 $COL1 $COL4
+client.focused_inactive $COL8 $COL0 $COL7 $COL8 $COL8
+client.unfocused $GRAY3 $COL0 $COL7 $COL8 $COL8
+
+default_border pixel
+titlebar_border_thickness 2
+titlebar_padding 6 3
+
+font pango:ProFont IIx Nerd Font Propo 11
+focus_follows_mouse always
+seat seat0 xcursor_theme MacOSX 28
+#====================
+# Binds 
+#====================
+## nav --------------
+### focus -----------
+
+bindsym $MOD+$LEFT focus left
+bindsym $MOD+$DOWN focus down
+bindsym $MOD+$UP focus up
+bindsym $MOD+$RIGHT focus right
+
+bindsym $MOD+Left focus left
+bindsym $MOD+Down focus down
+bindsym $MOD+Up focus up
+bindsym $MOD+Right focus right
+
+### movement --------
+bindsym $MOD+Shift+$LEFT move left
+bindsym $MOD+Shift+$DOWN move down
+bindsym $MOD+Shift+$UP move up
+bindsym $MOD+Shift+$RIGHT move right
+
+bindsym $MOD+Shift+Left move left
+bindsym $MOD+Shift+Down move down
+bindsym $MOD+Shift+Up move up
+bindsym $MOD+Shift+Right move right
+
+### workspaces ------ 
+bindsym $MOD+1 workspace number 1
+bindsym $MOD+2 workspace number 2
+bindsym $MOD+3 workspace number 3
+bindsym $MOD+4 workspace number 4
+bindsym $MOD+5 workspace number 5
+bindsym $MOD+6 workspace number 6
+bindsym $MOD+7 workspace number 7
+bindsym $MOD+8 workspace number 8
+bindsym $MOD+9 workspace number 9
+bindsym $MOD+0 workspace number 10
+
+bindsym $MOD+Shift+1 move container to workspace number 1 ; workspace number 1
+bindsym $MOD+Shift+2 move container to workspace number 2 ; workspace number 2
+bindsym $MOD+Shift+3 move container to workspace number 3 ; workspace number 3
+bindsym $MOD+Shift+4 move container to workspace number 4 ; workspace number 4
+bindsym $MOD+Shift+5 move container to workspace number 5 ; workspace number 5
+bindsym $MOD+Shift+6 move container to workspace number 6 ; workspace number 6
+bindsym $MOD+Shift+7 move container to workspace number 7 ; workspace number 7
+bindsym $MOD+Shift+8 move container to workspace number 8 ; workspace number 8
+bindsym $MOD+Shift+9 move container to workspace number 9 ; workspace number 9
+bindsym $MOD+Shift+0 move container to workspace number 10 ; workspace number 10
+
+## resize -----------
+bindsym $MOD+r mode "resize"
+
+mode "resize" {
+    bindsym $LEFT resize shrink width 10px
+    bindsym $DOWN resize grow height 10px
+    bindsym $UP resize shrink height 10px
+    bindsym $RIGHT resize grow width 10px
+
+    bindsym Left resize shrink width 10px
+    bindsym Down resize grow height 10px
+    bindsym Up resize shrink height 10px
+    bindsym Right resize grow width 10px
+
+    bindsym Return mode "default"
+    bindsym Escape mode "default"
+}
+
+## layout -----------
+bindsym $MOD+s splith
+bindsym $MOD+v splitv
+
+bindsym $MOD+Shift+s layout stacking
+bindsym $MOD+Shift+t layout tabbed
+bindsym $MOD+Shift+e layout toggle split
+
+bindsym $MOD+f fullscreen
+bindsym $MOD+Shift+b floating toggle
+bindsym $MOD+b focus mode_toggle
+bindsym $MOD+a focus parent
+
+## Scratchpad -------
+bindsym $MOD+Shift+minus move scratchpad
+bindsym $MOD+minus scratchpad show
+
+## misc -------------
+floating_modifier $MOD normal
+bindsym $MOD+Shift+r reload
+bindsym $MOD+Shift+o exit
+bindsym $MOD+c kill
+
+## utilities --------
+
+bindsym $MOD+q exec $TERM
+bindsym $MOD+u exec $BROWSER
+bindsym $MOD+space exec $LAUNCHER
+bindsym $MOD+g exec $SHARPBOARD
+
+bindsym Print exec $SS_DYNAMIC
+bindsym Shift+Print exec $SS_OUTPUT
+
+bindsym --locked XF86AudioMute exec pactl set-sink-mute \@DEFAULT_SINK@ toggle
+bindsym --locked XF86AudioLowerVolume exec pactl set-sink-volume \@DEFAULT_SINK@ -5%
+bindsym --locked XF86AudioRaiseVolume exec pactl set-sink-volume \@DEFAULT_SINK@ +5%
+bindsym --locked XF86AudioMicMute exec pactl set-source-mute \@DEFAULT_SOURCE@ toggle
+
+bindsym --locked XF86MonBrightnessDown exec brightnessctl set 1%-
+bindsym --locked XF86MonBrightnessUp exec brightnessctl set 1%+
+
+#====================
+# Gestures  
+#====================
+bindgesture swipe:3:up workspace next
+bindgesture swipe:3:down workspace prev
+
+bindgesture pinch:3:inward resize shrink width 10ppt
+bindgesture pinch:3:outward resize grow width 10ppt
