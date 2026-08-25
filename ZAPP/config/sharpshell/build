@@ -1,0 +1,26 @@
+#!/usr/bin/env bash
+
+# -lm to include math
+# -I to provide headers
+# -L to provide .so
+# -w suppress warnings
+# LD_LIBRARY_PATH Its a dynamically linked executable the
+# linker needs to know the the location of the library.
+valac \
+    --vapidir=./vapi \
+    --pkg gtk4 \
+    --pkg gtk4-layer-shell-0 \
+    --pkg json-glib-1.0 \
+    --pkg posix \
+    --pkg graphene-gobject-1.0 \
+    --pkg gee-0.8 \
+    --pkg livechart-2 \
+    -X -lm \
+    -X -I./include/ \
+    -X -L./lib/ \
+    -X -llivechart-2 \
+    -X -w \
+    -o sharpshell \
+    ./*.vala \
+    && export LD_LIBRARY_PATH=./lib:$LD_LIBRARY_PATH \
+    && ./sharpshell -d

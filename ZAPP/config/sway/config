@@ -14,7 +14,6 @@ set $BROWSER helium-browser
 set $LAUNCHER zsh -c 'drun'
 set $SS_OUTPUT zsh -c "screenshot o"
 set $SS_DYNAMIC zsh -c "screenshot d"
-set $SHARPBOARD zsh -c "sharpboard"
 ## colors -----------
 set $COL0	#1e1e2e
 set $COL1   #f38ba8
@@ -72,7 +71,7 @@ input type:keyboard {
 #====================
 # Looks 
 #====================
-client.focused $COL4 $COL4 $COL0 $COL1 $COL4
+client.focused $COL4 $COL4 $COL0 $COL10 $COL4
 client.focused_inactive $COL8 $COL0 $COL7 $COL8 $COL8
 client.unfocused $GRAY3 $COL0 $COL7 $COL8 $COL8
 
@@ -179,7 +178,6 @@ bindsym $MOD+c kill
 bindsym $MOD+q exec $TERM
 bindsym $MOD+u exec $BROWSER
 bindsym $MOD+space exec $LAUNCHER
-bindsym $MOD+g exec $SHARPBOARD
 
 bindsym Print exec $SS_DYNAMIC
 bindsym Shift+Print exec $SS_OUTPUT

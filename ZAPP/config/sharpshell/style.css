@@ -1,0 +1,688 @@
+@define-color COL0	#1e1e2e;
+@define-color COL1  #f38ba8;
+@define-color COL2	#a6e3a1;
+@define-color COL3	#fab387;
+@define-color COL4	#89b4fa;
+@define-color COL5	#cba6f7;
+@define-color COL6	#74c7ec;
+@define-color COL7	#bac2de;
+@define-color COL8	#6c7086;
+@define-color COL9	#eba0ac;
+@define-color COL10	#94e2d5;
+@define-color COL11	#f9e2af;
+@define-color COL12	#b4befe;
+@define-color COL13	#f5c2e7;
+@define-color COL14 #89dceb;
+@define-color COL15	#cdd6f4;
+
+@define-color GRAY11 #cdd6f4;
+@define-color GRAY10 #bac2de;
+@define-color GRAY9  #a6adc8;
+@define-color GRAY8  #9399b2;
+@define-color GRAY7  #7f849c;
+@define-color GRAY6  #6c7086;
+@define-color GRAY5  #585b70;
+@define-color GRAY4  #45475a;
+@define-color GRAY3  #313244;
+@define-color GRAY2  #1e1e2e;
+@define-color GRAY1  #181825;
+@define-color GRAY0  #11111b;
+
+*{
+    all: unset;    
+    font-family: ProFont IIx Nerd Font Propo;
+    font-size: 13px;
+    font-weight:bold;
+    padding: 1px 0px;
+}
+.test_bounds {
+    border: 2px solid @COL1;
+}
+
+/* ====== */
+/* Topbar */
+/* ====== */
+.topbar {
+    background-color: @COL0;
+    padding-bottom: 4px;
+}
+.topbar_border {
+    background-color: @COL4;
+}
+/* Shared Button Styles */
+/* -------------------- */
+.topbar .binding_state_widget,
+.topbar .time_widget,
+.topbar .cpu_widget,
+.topbar .temp_widget,
+.topbar .mem_widget,
+.topbar .storage_widget,
+.topbar .net_widget,
+.topbar .bat_widget {
+    color: @COL0;
+    padding: 0px 4px;
+    border-style: solid;
+    border-color: @COL0;
+    border-width: 0px 2px 2px 0px;
+}
+.topbar .binding_state_widget:hover,
+.topbar .time_widget:hover,
+.topbar .cpu_widget:hover,
+.topbar .temp_widget:hover,
+.topbar .mem_widget:hover,
+.topbar .storage_widget:hover,
+.topbar .net_widget:hover,
+.topbar .bat_widget:hover {
+    border: none;
+    box-shadow: none;
+    margin: 2px 0px 0px 2px;
+}
+/* Binding States */
+/* -------------- */
+.topbar .binding_state_widget {
+    margin-left: 4px;
+    background-color: @COL5;
+    box-shadow: 2px 2px 0px @COL5;
+}
+.topbar .binding_state_widget:hover {
+    margin: 2px 0px 0px 6px;
+}
+.topbar .binding_state_widget_default {
+    background-color: @COL5;
+    box-shadow: 2px 2px 0px @COL5;
+}
+.topbar .binding_state_widget_resize {
+    background-color: @COL1;
+    box-shadow: 2px 2px 0px @COL1;
+}
+/* Workspaces */
+/* ---------- */
+.workspaces_widget .button {
+    color: @COL15;
+    padding: 0px 4px;
+    margin-left: 8px;
+    border-style: solid;
+    border-color: transparent;
+    border-width: 0px 0px 2px 0px;
+}
+.workspaces_widget .button:hover {
+    border-color: transparent transparent @COL15 transparent;
+}
+.workspaces_widget .button_focused {
+    margin-left: 8px;
+    color: @COL0;
+    padding: 0px 4px;
+    border-style: solid;
+    border-color: @COL0;
+    border-width: 0px 2px 2px 0px;
+    box-shadow: 2px 2px 0px @COL4;
+    background-color: @COL4;
+}
+.workspaces_widget .button_urgent {
+    margin-left: 8px;
+    color: @COL0;
+    padding: 0px 4px;
+    border-style: solid;
+    border-color: @COL0;
+    border-width: 0px 2px 2px 0px;
+    box-shadow: 2px 2px 0px @COL3;
+    background-color: @COL3;
+}
+.workspaces_widget .button_urgent:hover,
+.workspaces_widget .button_focused:hover {
+    border: none;
+    box-shadow: none;
+    margin: 2px 0px 0px 10px;
+}
+/* Focused Workspace name */
+/* ---------------------- */
+.focused_ws_title_widget {
+    margin-left: 12px;
+    color: @COL15;
+}
+/* Time */
+/* ---- */
+.topbar .time_widget {
+    background-color: @COL3;
+    box-shadow: 2px 2px 0px @COL3;
+}
+/* Calender */
+/* -------- */
+.calender_widget .calender {
+    color: @COL0;
+    margin-top: 2px;
+    padding: 4px;
+    border: 2px solid @COL0;
+    background-color: @COL3;
+}
+.calender_widget button:hover {
+    color: white;
+}
+.calender_widget label.day-number.today {
+    border-top: 2px solid @COL0;
+    border-left: 2px solid @COL0;
+    border-right: 2px solid white;
+    border-bottom: 2px solid white;
+    background-color: mix(@COL0, @COL3, 0.9);
+}
+.calender_widget label.day-name {
+    border-top: 2px solid @COL0;
+    border-bottom: 2px solid @COL0;
+}
+/* Others */
+/* -------- */
+.topbar .cpu_widget,
+.topbar .temp_widget,
+.topbar .mem_widget,
+.topbar .storage_widget,
+.topbar .net_widget,
+.topbar .bat_widget {
+    margin-right: 8px;
+}
+.topbar .cpu_widget:hover,
+.topbar .temp_widget:hover,
+.topbar .mem_widget:hover,
+.topbar .storage_widget:hover,
+.topbar .net_widget:hover,
+.topbar .bat_widget:hover {
+    margin-right: 8px;
+}
+.cpu_widget {
+    background-color: @COL1;
+    box-shadow: 2px 2px 0px @COL1;
+}
+.temp_widget {
+    background-color: @COL9;
+    box-shadow: 2px 2px 0px @COL9;
+}
+.mem_widget {
+    background-color: @COL4;
+    box-shadow: 2px 2px 0px @COL4;
+}
+.storage_widget {
+    background-color: @COL6;
+    box-shadow: 2px 2px 0px @COL6;
+}
+.net_widget {
+    background-color: @COL10;
+    box-shadow: 2px 2px 0px @COL10;
+}
+.bat_widget {
+    background-color: @COL13;
+    box-shadow: 2px 2px 0px @COL13;
+}
+/* ================================= */
+
+/* ======= */
+/* Sidebar */
+/* ======= */
+.sidebar {
+    background-color: @COL0; 
+    border-left: 2px solid @COL4;
+    padding: 8px;
+}
+/* ------------ */
+/* Sidebar Slim */
+/* ------------ */
+.sidebar .expander_widget {
+    color: @COL0;
+    padding: 0px 4px;
+    border-style: solid;
+    border-color: @COL0;
+    border-width: 0px 2px 2px 0px;
+    background-color: @COL4;
+    box-shadow: 2px 2px 0px @COL4;
+}
+.sidebar .expander_widget:hover {
+    border: none;
+    box-shadow: none;
+    margin: 2px 0px 0px 2px;
+}
+.sidebar .brightness_widget,
+.sidebar .audio_sink_widget,
+.sidebar .audio_source_widget
+{
+    color: @COL10;
+    padding: 4px 0px;
+    margin-bottom: 8px;
+    border-style: solid;
+    border-color: @COL10;
+    background-color: mix(@COL10,@COL0,0.6);
+    border-width: 2px;
+}
+.sidebar .brightness_widget .label,
+.sidebar .audio_sink_widget .label,
+.sidebar .audio_source_widget .label,
+.sidebar .brightness_widget .icon,
+.sidebar .audio_sink_widget .icon,
+.sidebar .audio_source_widget .icon
+{
+    margin-top: 10px;
+}
+.sidebar .brightness_widget .scale,
+.sidebar .audio_sink_widget .scale,
+.sidebar .audio_source_widget .scale 
+{
+    min-height: 120px;
+}
+
+.sidebar .brightness_widget .scale trough,
+.sidebar .audio_sink_widget .scale trough,
+.sidebar .audio_source_widget .scale trough,
+.sidebar .brightness_widget .scale highlight,
+.sidebar .audio_sink_widget .scale highlight,
+.sidebar .audio_source_widget .scale highlight 
+{
+    background: linear-gradient(
+    to right,
+        transparent 0%,
+        transparent 40%,
+        @COL0 40%,
+        @COL0 60%,
+        transparent 60%,
+        transparent 100%
+    );
+}
+.sidebar .brightness_widget .scale slider,
+.sidebar .audio_sink_widget .scale slider,
+.sidebar .audio_source_widget .scale slider
+{
+    min-width: 16px;
+    min-height: 14px;
+    background-color: @COL10;
+    border: 2px solid @COL0;
+    border-radius: 50%;
+}
+.sidebar .brightness_widget .label,
+.sidebar .audio_sink_widget .label,
+.sidebar .audio_source_widget .label,
+.sidebar .brightness_widget .icon,
+.sidebar .audio_sink_widget .icon,
+.sidebar .audio_source_widget .icon
+{
+    transform: rotate(-90deg);
+}
+/* ---------------- */
+/* Sidebar Expanded */
+/* ---------------- */
+.sidebar .action_slab_widget {
+    border: 2px solid @COL8;
+    margin-right: 8px;
+    padding: 8px;
+}
+/* Brain */
+/* ----- */
+.sidebar .brain_widget {
+    color: @COL8;
+    background-color: @COL0;
+    border: 2px solid @COL8;
+    padding: 6px 6px 0px 0px;
+}
+/* CPU Panel */
+/* --------- */
+.sidebar .cpu_panel_widget {
+    margin-top: 2px;
+}
+.sidebar .cpu_panel_widget .stack {
+    margin: 2px 0px;
+    border: 2px solid @COL8;
+    padding-left: 2px;
+}
+.sidebar .cpu_panel_widget .header {
+    border-width: 2px;
+    border-style: solid;
+    border-color: transparent;
+    padding: 0px 4px;
+    color: @COL8;
+}
+.sidebar .cpu_panel_widget .header .button_nav {
+    padding: 0px 4px;
+    font-size: 14px;
+    border: 2px solid;
+    border-color: transparent;
+}
+.sidebar .cpu_panel_widget .header .button_nav:hover {
+    color: white;
+}
+.sidebar .cpu_panel_widget .header .button_nav_focused {
+    color: @COL1;
+    background-color: mix(@COL1,@COL0,0.7);
+    border: 2px solid;
+    border-color: @COL1;
+}
+.sidebar .cpu_panel_widget .header .button_nav_focused:hover {
+    color: @COL13;
+}
+.sidebar .cpu_panel_widget .bars_widget {
+    padding: 4px;
+}
+.sidebar .cpu_panel_widget .bars_widget .chunk {
+    background-color: alpha(@COL8,0.2);
+    padding: 4px;
+    margin: 4px;
+}
+.sidebar .cpu_panel_widget .bars_widget .chunk .header {
+    margin-bottom: 2px;
+}
+.sidebar .cpu_panel_widget .bars_widget .chunk .levelbar {
+    min-height: 4px;
+    padding: 0px 6px;
+}
+.sidebar .cpu_panel_widget .bars_widget .chunk .levelbar trough {
+    background-color: alpha(@COL8,0.4);
+}
+.sidebar .cpu_panel_widget .bars_widget .chunk .levelbar block.filled.low {
+    background: linear-gradient(
+    to right,
+    @COL2,
+    @COL6
+    );
+}
+.sidebar .cpu_panel_widget .bars_widget .chunk .levelbar block.filled.high {
+    background: linear-gradient(
+    to right,
+    @COL2,
+    @COL6,
+    @COL4
+    );
+}
+.sidebar .cpu_panel_widget .bars_widget .chunk .levelbar block.filled.full {
+    background: linear-gradient(
+    to right,
+    @COL2,
+    @COL6,
+    @COL4,
+    @COL9,
+    @COL1
+    );
+}
+/* Mem Panel */
+/* --------- */
+.mem_panel_widget {
+    margin-top: 4px;
+    border: 2px solid @COL8;
+    padding-left: 2px;
+}
+/* DiskIO Panel */
+/* ------------ */
+.diskio_panel_widget {
+    margin-top: 4px;
+}
+.diskio_panel_widget .disk_name {
+    background-color: alpha(@COL3,0.5);
+    color: @COL3;
+    border-left: 2px solid @COL3;
+    padding: 0px 4px 0px 4px;
+}
+.diskio_panel_widget .header .prev,
+.diskio_panel_widget .header .next {
+    color: @COL0;
+    padding: 0px 4px;
+    border-style: solid;
+    border-color: @COL0;
+    border-width: 0px 2px 2px 0px;
+    background-color: @COL3;
+    box-shadow: 2px 2px 0px @COL3;
+}
+.diskio_panel_widget .header .prev:hover,
+.diskio_panel_widget .header .next:hover {
+    border: none;
+    box-shadow: none;
+    margin: 2px 0px 0px 2px;
+}
+.diskio_panel_widget .stack .chunk .graph_kibps,
+.diskio_panel_widget .stack .chunk .graph_iops {
+    margin-top: 2px;
+    border: 2px solid @COL8;
+    padding-left: 2px;
+}
+/* ------------ */
+/* Tabbed Group */
+/* ------------ */
+.tabbed_widget_panel .nav {
+    margin-top: 4px;
+}
+/* RMPC */
+/* ---- */
+.tabbed_widget_panel .rmpc {
+    border: 2px solid @COL8;
+    padding: 2px;
+}
+.tabbed_widget_panel .rmpc .controls .title {
+    color: @COL10;
+}
+.tabbed_widget_panel .rmpc .controls .artists {
+    color: @COL13;
+}
+.tabbed_widget_panel .rmpc .controls .nav .prev label,
+.tabbed_widget_panel .rmpc .controls .nav .pp label,
+.tabbed_widget_panel .rmpc .controls .nav .next label {
+    font-size: 18px;
+}
+.tabbed_widget_panel .rmpc .controls .nav .prev,
+.tabbed_widget_panel .rmpc .controls .nav .pp,
+.tabbed_widget_panel .rmpc .controls .nav .next {
+    margin: 0px 8px;
+    color: @COL8;
+}
+.tabbed_widget_panel .rmpc .controls .nav .pp_resumed {
+    color: @COL2;
+}
+.tabbed_widget_panel .rmpc .controls .nav .prev:hover,
+.tabbed_widget_panel .rmpc .controls .nav .pp:hover,
+.tabbed_widget_panel .rmpc .controls .nav .next:hover {
+    color: @COL15;
+}
+.tabbed_widget_panel .rmpc .controls .scale {
+    margin: 0px 8px;
+    padding-bottom: 4px;
+    border-bottom: 2px dashed @COL8;
+}
+.tabbed_widget_panel .rmpc .controls .scale trough {
+    min-height: 12px;
+    background: linear-gradient(
+        to bottom,
+        transparent 0%,
+        transparent 40%,
+        @COL8 40%,
+        @COL8 60%,
+        transparent 60%,
+        transparent 100%
+    );
+}
+.tabbed_widget_panel .rmpc .controls .scale highlight {
+    min-height: 12px;
+    background: linear-gradient(
+        to bottom,
+        transparent 0%,
+        transparent 40%,
+        @COL4 40%,
+        @COL4 60%,
+        transparent 60%,
+        transparent 100%
+    );
+}
+.tabbed_widget_panel .rmpc .controls .scale slider {
+    min-width: 12px;
+    min-height: 10px;
+    background-color: @COL4;
+    border: 2px solid @COL0;
+    border-radius: 50%;
+}
+.tabbed_widget_panel .rmpc .controls .mods .repeat,
+.tabbed_widget_panel .rmpc .controls .mods .random,
+.tabbed_widget_panel .rmpc .controls .mods .single,
+.tabbed_widget_panel .rmpc .controls .mods .consume {
+    margin: 4px;
+    color: @COL8;
+}
+.tabbed_widget_panel .rmpc .controls .mods .consume {
+    margin-right: 8px;
+}
+.tabbed_widget_panel .rmpc .controls .mods .repeat_on,
+.tabbed_widget_panel .rmpc .controls .mods .random_on,
+.tabbed_widget_panel .rmpc .controls .mods .single_on,
+.tabbed_widget_panel .rmpc .controls .mods .consume_on {
+    color: @COL2;
+}
+.tabbed_widget_panel .rmpc .controls .mods .repeat_oneshot,
+.tabbed_widget_panel .rmpc .controls .mods .random_oneshot,
+.tabbed_widget_panel .rmpc .controls .mods .single_oneshot,
+.tabbed_widget_panel .rmpc .controls .mods .consume_oneshot {
+    color: @COL3;
+}
+.tabbed_widget_panel .rmpc .controls .mods .repeat:hover,
+.tabbed_widget_panel .rmpc .controls .mods .random:hover,
+.tabbed_widget_panel .rmpc .controls .mods .single:hover,
+.tabbed_widget_panel .rmpc .controls .mods .consume:hover {
+    color: @COL15;
+}
+/* Cava */
+/* ---- */
+.tabbed_widget_panel .cava {
+    margin-top: 8px;
+    border: 2px solid @COL8;
+    padding: 2px;
+}
+.tabbed_widget_panel .cava .levelbar {
+    margin: 2px;
+}
+.tabbed_widget_panel .cava .levelbar trough {
+    background-color: @COL0;
+}
+.tabbed_widget_panel .cava .levelbar block.filled.low {
+    background: linear-gradient(
+        to top,
+        @COL6,
+        @COL4
+    );
+}
+.tabbed_widget_panel .cava .levelbar block.filled.high {
+    background: linear-gradient(
+        to top,
+        @COL6 0%,
+        @COL4 50%,
+        @COL5 100%
+    );
+}
+.tabbed_widget_panel .cava .levelbar block.filled.full {
+    background: linear-gradient(
+        to top,
+        @COL6 0%,
+        @COL4 35%,
+        @COL5 70%,
+        @COL13 100%
+    );
+}
+.tabbed_widget_panel .nav .music {
+    color: @COL6;
+    padding: 0px 6px;
+    margin-right: 4px;
+    border: 2px solid @COL6;
+    background-color: mix(@COL6,@COL0,0.8);
+}
+.tabbed_widget_panel .nav .music:hover {
+    color: white;
+}
+/* BT */
+/* -- */
+.bt_widget {
+    border: 2px solid @COL8;
+}
+.controller_widget {
+    margin:4px 8px 8px 4px;
+    padding: 4px;
+    border-width: 0px 2px 2px 0px;
+    border-style: solid;
+    border-color: @COL0;
+    background-color: @COL10;
+    box-shadow: 4px 4px 0px @COL10;
+}
+.controller_widget .header {
+    color: @COL0;
+    border-bottom: 2px dashed mix(@COL0,@COL10,0.7);
+    margin-bottom: 4px;
+}
+.controller_widget .header .name {
+    margin-left: 4px;
+}
+.controller_widget .nav button label {
+    font-size: 11px;
+}
+.controller_widget .nav .powered_on,
+.controller_widget .nav .discoverable_on,
+.controller_widget .nav .pairable_on {
+    border-width: 2px;
+    border-style: solid;
+    border-color: mix(@COL0,@COL10,0.5) white white mix(@COL0,@COL10,0.5);
+    background-color: mix(@COL0,@COL10,0.8);
+}
+.controller_widget .nav .powered,
+.controller_widget .nav .discoverable,
+.controller_widget .nav .pairable {
+    color: @COL0;
+}
+.controller_widget .nav .powered:hover,
+.controller_widget .nav .discoverable:hover,
+.controller_widget .nav .pairable:hover {
+    color: white;
+}
+.devices_widget {
+    margin:4px 8px 8px 4px;
+    padding: 4px;
+    background-color: @COL13;
+    border-width: 0px 2px 2px 0px;
+    border-style: solid;
+    border-color: @COL0;
+    box-shadow: 4px 4px 0px @COL13;
+}
+.devices_widget .header {
+    color: @COL0;
+    border-bottom: 2px dashed mix(@COL0,@COL13,0.7);
+    margin-bottom: 4px;
+}
+.devices_widget .header .name {
+    margin-left: 8px;
+}
+.devices_widget .header .remove {
+    color: @COL1;
+    text-shadow: 1px 1px @COL0;
+}
+.devices_widget .header .remove:hover {
+    color: white;
+    text-shadow: 1px 1px @COL0;
+}
+.devices_widget .nav button label {
+    font-size: 11px;
+}
+.devices_widget .nav .paired_on,
+.devices_widget .nav .trusted_on,
+.devices_widget .nav .blocked_on,
+.devices_widget .nav .connected_on {
+    border-width: 2px;
+    border-style: solid;
+    border-color: mix(@COL0,@COL13,0.5) white white mix(@COL0,@COL13,0.5);
+    background-color: mix(@COL0,@COL13,0.8);
+}
+.devices_widget .nav .paired,
+.devices_widget .nav .trusted,
+.devices_widget .nav .blocked,
+.devices_widget .nav .connected{
+    color: @COL0;
+}
+.devices_widget .nav .paired:hover,
+.devices_widget .nav .trusted:hover,
+.devices_widget .nav .blocked:hover,
+.devices_widget .nav .connected:hover{
+    color: white;
+}
+.tabbed_widget_panel .nav .bt {
+    color: @COL10;
+    padding: 0px 6px;
+    margin-right: 4px;
+    border: 2px solid @COL10;
+    background-color: mix(@COL10,@COL0,0.8);
+}
+.tabbed_widget_panel .nav .bt:hover {
+    color: white;
+}

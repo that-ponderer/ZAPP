@@ -40,9 +40,11 @@ rm -f "${PID}"/*
     "${PID}"/swaybg.pid "${LOG}"/swaybg.log \
     swaybg -m fill -i "${ZAPP_PATH}"/config/current/wallpaper.?(jpg|png|jpeg)
 #====================
-# Bar 
+# Sharpshell 
 #====================
-"${ZAPP_PATH}"/config/eww/eww -c "${ZAPP_PATH}"/config/eww/bar open bar &
+sleep 1 ; "${HELPERS}"/daemonize \
+    "${PID}"/sharpshell.pid "${LOG}"/sharpshell.log \
+    "${ZAPP_PATH}/config/sharpshell/run"
 #====================
 # MPD 
 #====================

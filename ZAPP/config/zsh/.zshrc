@@ -32,6 +32,7 @@ alias jd="flatpak info org.jdownloader.JDownloader > /dev/null 2>&1 && \
     { _JAVA_AWT_WM_NONREPARENTING=1 GDK_BACKEND=x11 \
     setsid flatpak run org.jdownloader.JDownloader > /dev/null 2>&1 \
     < /dev/null ; exit ; }"
+alias rmpc="rmpc -c ${ZAPP_PATH}/config/rmpc/config.ron"
 #====================
 # Force Vim bindings
 #====================

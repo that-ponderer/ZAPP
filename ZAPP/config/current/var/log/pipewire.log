@@ -1,8 +1,0 @@
-[E][06:27:06.911573] pw.node      | [     impl-node.c:  500 node_update_state()] (bluez_output.DF_D3_96_22_AC_BE.1-61) running -> error (Received error event)
-[E][12:09:09.684232] pw.node      | [     impl-node.c:  500 node_update_state()] (bluez_output.DF_D3_96_22_AC_BE.1-83) running -> error (Received error event)
-[E][13:48:29.109612] pw.node      | [     impl-node.c:  500 node_update_state()] (bluez_output.DF_D3_96_22_AC_BE.1-110) running -> error (Received error event)
-[E][19:01:52.661523] pw.node      | [     impl-node.c:  500 node_update_state()] (bluez_output.DF_D3_96_22_AC_BE.1-88) running -> error (Received error event)
-[E][21:59:14.192461] pw.node      | [     impl-node.c:  500 node_update_state()] (bluez_output.DF_D3_96_22_AC_BE.1-43) running -> error (Received error event)
-[E][23:04:54.505551] pw.node      | [     impl-node.c:  500 node_update_state()] (bluez_output.DF_D3_96_22_AC_BE.1-47) running -> error (Received error event)
-[E][23:10:46.694595] pw.node      | [     impl-node.c:  500 node_update_state()] (bluez_output.DF_D3_96_22_AC_BE.1-92) running -> error (Received error event)
-[E][23:12:52.356667] pw.node      | [     impl-node.c:  500 node_update_state()] (bluez_output.DF_D3_96_22_AC_BE.1-82) running -> error (Received error event)

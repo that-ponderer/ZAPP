@@ -361,9 +361,9 @@ keyset("n", "<space>p", ":<C-u>CocListResume<cr>", opts)
 
 -- Treesitter {{{
 nvim_treesitter = require('nvim-treesitter')
-nvim_treesitter.install {'latex'}
+nvim_treesitter.install {'latex' , 'vala'}
 vim.api.nvim_create_autocmd({"BufEnter", "BufWinEnter"}, {
-    pattern = {'*.c', '*.tex', '*.yuck'},
+    pattern = {'*.c', '*.tex', '*.vala'},
     callback = function() vim.treesitter.start() end,
 })
 function print_treesitter_installed () 
@@ -515,6 +515,7 @@ vim.keymap.set({'n', 'v'}, '<C-g>', '<cmd>Yazi cwd<cr>', { desc = 'Open yazi in 
 -- custom
 vim.keymap.set({'n'}, '<leader>p','"0p' ,{ desc = 'Paste' })
 vim.keymap.set({'n'}, 'gb', '<cmd>bn<cr>', { desc = 'Next buffer' })
+vim.keymap.set({'n'}, 'gB', '<cmd>bp<cr>', { desc = 'Previous buffer' })
 vim.keymap.set({'n'}, '<leader>gw', 
 function () 
     if vim.opt.linebreak._value then vim.opt.linebreak = false

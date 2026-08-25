@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+
+# "$0" can be unreliable when calling the script 
+# with backword pathing like ../../script.sh, realpath fixes that.
+
+HERE="$(dirname "$(realpath "$0")")"
+export LD_LIBRARY_PATH="./lib:$HERE/lib" && "$HERE"/sharpshell -d

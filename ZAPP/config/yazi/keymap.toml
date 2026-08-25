@@ -4,9 +4,10 @@
 #:schema https://yazi-rs.github.io/schemas/keymap.json
 
 [mgr]
-
 # =========================================================
 prepend_keymap = [
+    # ucp
+    # ====
     { on = "y", run = "plugin ucp copy", desc = "Copy" },
 	{ on = [ "g", "t" ], run = "cd ~/.local/share/Trash", desc = "Go Trash" },
 ]

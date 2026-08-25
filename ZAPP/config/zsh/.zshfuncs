@@ -1,11 +1,33 @@
 #====================
 # Global funtions
 #====================
-wstart(){
+sway_start(){
+    command -v sway &> /dev/null || {printf "Sway not installed!!"; return 1;}
     export XDG_CURRENT_DESKTOP=sway 
     export XCURSOR_THEME=MacOSX
     export XCURSOR_SIZE=28
     WLR_DRM_DEVICES=/dev/dri/card1 dbus-run-session sway
+}
+reset_audio(){
+    pkill pipewire ; pipewire &> /dev/null & disown
+    pkill pipewire-pulse ; pipewire-pulse &> /dev/null & disown
+    pkill wireplumber ; wireplumber &> /dev/null & disown
+}
+rename_zero_padded() {
+    local dir="${1:-.}"
+    local width="${2:-3}"
+    local i=1
+    local file ext new
+
+    for file in "$dir"/*; do
+        [[ -f "$file" ]] || continue
+
+        ext="${file##*.}"
+        printf -v new "%0${width}d.%s" "$i" "$ext"
+
+        mv -- "$file" "$dir/$new"
+        ((i++))
+    done
 }
 nvim() {
     command nvim \
@@ -69,51 +91,6 @@ yt () {
         "$@"
     fi
 }
-sharpboard () {
-    local EWW="${ZAPP_PATH}"/config/eww/eww
-    local CONFIG_DIR="${ZAPP_PATH}"/config/eww/sharpboard
-    local SCRIPT_DIR="${ZAPP_PATH}"/config/eww/scripts
-    local CACHE_DIR="${XDG_CACHE_HOME:-$HOME/.cache}/ZAPP"
-
-    is_open(){
-        while IFS=':' read -r win_id win_name ; do
-            [[ "${win_id}" == "sharpboard" ]] && return 0
-        done < <( "$EWW" -c "$CONFIG_DIR" active-windows 2> /dev/null )
-        return 1
-    }
-
-    if is_open ; then
-        "$EWW" -c "$CONFIG_DIR" close sharpboard && printf "closed\n"
-    else
-        "$EWW" -c "$CONFIG_DIR" open sharpboard && printf "opened\n"
-        (
-            # wait for it to open 
-            while ! is_open ; do 
-                sleep 0.1
-            done
-            
-            # immidately update var
-            [[ -f "$CACHE_DIR"/maximainit ]] && \
-                "$EWW" -c "$CONFIG_DIR" update MAXIMA="$(< "$CACHE_DIR"/maximainit )"
-
-            # bt scan on
-            bluetoothctl -t 10 scan on  &> /dev/null &
-            local bt_PID=$!
- 
-            # update loop
-            while : ; do 
-                # stop when it closes
-                is_open || \
-                    { [[ "$(ps -p "$bt_PID" -o  comm=)" == "bluetoothctl" ]] && \
-                        kill -9 "$bt_PID" &> /dev/null ; break ; }
-
-                MAXIMA="$( "${SCRIPT_DIR}"/maxima )"
-
-                "$EWW" -c "$CONFIG_DIR" update MAXIMA="${MAXIMA}"
-            done
-        ) &
-    fi
-}
 screenshot() {
     shotpath="${HOME}/Pictures/Screenshots/$(date +'%Y-%m-%d_%H-%M-%S').png"
     mkdir -p "$(dirname "$shotpath")"
@@ -162,4 +139,30 @@ screen_record() {
     # freedesktop standerd file transfer mimetype
     # uses urls, used in drag and droping
     wl-copy --type "text/uri-list" "file://${videopath}"
+}
+mirror(){
+    case "$1" in
+        "f")
+            scrcpy \
+                --video-codec=h265 \
+                --new-display=1920x1080/120 \
+                --video-bit-rate=32M \
+                --print-fps \
+                --flex-display \
+                --gamepad=uhid
+            ;;
+        "g")
+            mangohud scrcpy \
+                --video-codec=h265 \
+                --video-bit-rate=24M \
+                --print-fps \
+                --gamepad=uhid
+            ;;
+        *)
+            scrcpy \
+                --video-codec=h265 \
+                --video-bit-rate=24M \
+                --print-fps \
+            ;;
+    esac
 }
