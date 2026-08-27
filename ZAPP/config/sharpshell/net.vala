@@ -21,7 +21,6 @@ namespace SharpUtils {
             public HashTable<string,long>   net_up_total;
 
             public static NET_Link? fetch (){
-                if (!SharpUtils.is_program ("ip")) return null;
                 string[] link_cmd = {"ip","-o","-s","link"};
                 var out = run(link_cmd);
                 if (out == null) return null;

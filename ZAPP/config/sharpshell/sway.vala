@@ -9,6 +9,7 @@ namespace SharpUtils {
         public string? focused_ws_title;
     }
     public class Sway : Farm<SwayData?> {
+        public new string name = "Sway";
         public enum Actions {SET_WORKSPACE}
         public void action(Actions Action,int actionarg){
             switch (Action) {

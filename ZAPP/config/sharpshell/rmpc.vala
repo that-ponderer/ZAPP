@@ -14,6 +14,7 @@ namespace SharpUtils {
         public uint elapsed;
     }
     public class RMPC : Farm<RMPCData?> {
+        public new string name = "RMPC";
         private string CONFIG;
         private string ALBUMART_FILE;
 

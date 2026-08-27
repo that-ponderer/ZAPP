@@ -11,14 +11,14 @@ namespace SharpUtils {
     
     public abstract class Farm<Food> : Object {
         public string name = "null";
-        private Food _Food = null;
         public signal void feed(Food _Food);
         public abstract Food harvest();
         public void plant(){
             var food = harvest();
-            if (food == null) 
+            if (food == null) {
+                SharpDebug.fail(@"Failed to harvest Farm: $(this.name)");
                 return;
-            _Food = food;
+            }
             Idle.add(()=>{
                 feed(food);
                 return false;

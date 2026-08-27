@@ -6,6 +6,7 @@ namespace SharpUtils {
         public HashTable<string, HashTable<string, string>> data;
     }
     public class Storage : Farm<StorageData?> {
+        public new string name = "Storage";
         public override StorageData? harvest(){
             if (!SharpUtils.is_program("df")) return null;
 
@@ -18,12 +19,10 @@ namespace SharpUtils {
                     str_hash,str_equal
                 )
             };
+
             foreach (var line in storage_out.split("\n")){
-                string[] tok = {};
-                foreach (var i in line.split(" ")) {
-                    if (i != "") tok += i ;
-                }
-                if (tok.length < 6) continue;
+                var tok = SharpUtils.tokenize(line, 6);
+                if (tok == null) continue;
                 
                 if (tok[0].contains("/dev/")){
                     var s_data = new HashTable<string, string>(str_hash,str_equal);
@@ -59,13 +58,16 @@ namespace SharpUtils {
         //               "write_kibps"  : "8192",
         //               "total_kibps"  : "24576"
         //             }
+        public new string name = "DiskIO";
         private ulong Interval;
         public DiskIO(ulong _Interval) {
             Interval = _Interval; 
         }
         public override DiskIOData? harvest(){
             var FILE_PATH = "/proc/diskstats";
+
             var file = FileStream.open(FILE_PATH, "r");
+            if (file == null) return null;
             
             var _DiskIOData = new DiskIOData(){
                 disks = new GenericArray<HashTable<string, string>>()
@@ -73,14 +75,9 @@ namespace SharpUtils {
             var disks_start = new GenericArray<HashTable<string, string>>();
             var disks_end = new GenericArray<HashTable<string, string>>();
 
-            if (file == null) return null;
-            string line = "" ; 
-            while ((line = file.read_line()) != null) {
-                string[] tok = {};
-                foreach (var i in line.split(" ")) {
-                    if (i != "") tok += i ;
-                }
-                if (tok.length < 10) continue;
+            string line = "" ; while ((line = file.read_line()) != null) {
+                var tok = SharpUtils.tokenize(line, 10);
+                if (tok == null) continue;
 
                 var disk = new HashTable<string, string>(str_hash,str_equal);
                 disk.insert("name",tok[2]);
@@ -92,11 +89,8 @@ namespace SharpUtils {
             }
             Thread.usleep(Interval); file.rewind();
             while ((line = file.read_line()) != null) {
-                string[] tok = {};
-                foreach (var i in line.split(" ")) {
-                    if (i != "") tok += i ;
-                }
-                if (tok.length < 10) continue;
+                var tok = SharpUtils.tokenize(line, 10);
+                if (tok == null) continue;
 
                 var disk = new HashTable<string, string>(str_hash,str_equal);
                 disk.insert("name",tok[2]);

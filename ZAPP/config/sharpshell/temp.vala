@@ -1,164 +1,156 @@
-#!/usr/bin/env -S vala --pkg gtk4 --pkg gtk4-layer-shell-0  sharputils.vala
+#!/usr/bin/env -S vala --pkg gtk4 --pkg gtk4-layer-shell-0 debug.vala sharputils.vala
 
 namespace SharpUtils {
     public class TempData {
         public HashTable<string, HashTable<string, GenericArray<string>>> data;
     }
     public class Temp : Farm<TempData?> {
-        // Temp
-        // └── data
-        //     ├── cpu
-        //     │   ├── labels → ["avg", "0", "1", "2", "3"]
-        //     │   └── inputs → ["51000", "50000", "52000", "51000", "51000"]
-        //     │
-        //     ├── nvme
-        //     │   ├── labels → ["Composite", "Sensor 1"]
-        //     │   └── inputs → ["42000", "45000"]
-        public override TempData? harvest() {
-            var TEMP_DIR = "/sys/class/hwmon";
+        public new string name = "Temp";
+        private string TEMP_DIR = "/sys/class/hwmon";
+        private Regex input_file_regex;
+        private Regex label_file_regex;
+        private Regex cpu_hwmon_regex;
 
-            Dir dir ; try {
-                if ((dir = Dir.open(TEMP_DIR)) == null ) return null;
-            } catch (FileError e) {
+        public Temp(){
+            try {
+                input_file_regex = new Regex("^temp[0-9]+_input$");
+                label_file_regex = new Regex("^temp[0-9]+_label$");
+                cpu_hwmon_regex = new Regex(
+                    "(cpu_thermal|coretemp|fam15h_power|k10temp)"
+                ); 
+            } catch (RegexError e) {SharpDebug.fail (e.message);}
+        }
+        public override TempData? harvest (){
+            try {
+                // Open top dir
+                var dir = Dir.open (TEMP_DIR);
+                if (dir == null) return null;
+                
+                // Need to make to object with all the relevent files first, as 
+                // the order recived from Dir.read_name() is not alphabetical.
+                var file_tree = 
+                    new HashTable<string, HashTable<string, GenericArray<string>>>(
+                        str_hash,
+                        str_equal
+                    );
+
+                // Every sub dir: hwmon[0-9]+
+                string s_path_name; 
+                while ((s_path_name = dir.read_name()) != null){
+                    var s_path = Path.build_filename (TEMP_DIR, s_path_name);
+                    if (!FileUtils.test (s_path, FileTest.IS_DIR)) continue;
+
+                    // Open sub dir
+                    var s_dir = Dir.open (s_path);
+                    if (s_dir == null) return null;
+                    
+                    var label_files_arr = new GenericArray<string>();
+                    var input_files_arr = new GenericArray<string>();
+                    var s_file_tree = 
+                        new HashTable<string, GenericArray<string>>(
+                            str_hash,
+                            str_equal
+                        );
+
+                    // Iterate through files
+                    string ss_path_name;
+                    while ((ss_path_name = s_dir.read_name()) != null){
+                        // Check if file is regular
+                        var ss_path = Path.build_filename (s_path, ss_path_name);
+                        if (!FileUtils.test (ss_path, FileTest.IS_REGULAR))
+                            continue;
+                        // Check if it matchs any of the two patterns
+                        if (input_file_regex.match(ss_path_name)) {
+                            input_files_arr.add (ss_path);
+                        }
+                        else if (label_file_regex.match(ss_path_name)) {
+                            label_files_arr.add (ss_path);
+                        }
+                    }
+                    // If any input is found
+                    if (input_files_arr.length > 0){
+                        // Sort
+                        input_files_arr.sort (strcmp);
+                        label_files_arr.sort (strcmp);
+                        // Populate file tree
+                        s_file_tree.insert ("inputs", input_files_arr);
+                        s_file_tree.insert ("labels", label_files_arr);
+                        file_tree.insert (s_path, s_file_tree);
+                    }
+                }
+
+                var _temp_data = new TempData (){
+                    data = new HashTable<
+                        string, HashTable<string, GenericArray<string>>>(
+                        str_hash,
+                        str_equal
+                    )
+                }; 
+
+                var ok = true;
+                // alt 
+                var label_alt = 0;
+                var name_alt  = 0;
+                file_tree.foreach ((hwmondir,label_input_ht)=>{
+                    if (!ok) return;
+
+                    var s_data = new HashTable<string, GenericArray<string>>
+                        (str_hash,str_equal);
+                    var ss_data_labels = new GenericArray<string>();
+                    var ss_data_inputs = new GenericArray<string>();
+
+                    // get the name
+                    var name_path = Path.build_filename (hwmondir, "name");
+                    string name = null;
+                    if (FileUtils.test (name_path, FileTest.IS_REGULAR)){
+                        var fs = FileStream.open (name_path, "r");
+                        if (fs != null) name = fs.read_line ();
+                    }
+                    if (name == null) name = @"$(name_alt++)";
+                    // cpu specific stuff
+                    if (cpu_hwmon_regex.match(name)) name = "cpu";
+
+                    var input_files_arr = label_input_ht.lookup("inputs");
+                    for (var i = 0; i < input_files_arr.length; i++){
+                        var input_file = input_files_arr[i];
+                        var fs_input = FileStream.open (input_file, "r");
+                        if (fs_input == null) {ok = false; return;}
+                        var input = fs_input.read_line ();
+                        ss_data_inputs.add (input);
+
+                        // only input files can exist without any label
+                        var label = "";
+                        var label_file = input_file.substring (
+                            0,input_file.length - "_input".length
+                        ) + "_label"; 
+                        if (FileUtils.test (label_file, FileTest.IS_REGULAR)){
+                            var fs_label = FileStream.open (label_file, "r");
+                            if (fs_label == null) {ok = false; return;}
+                            label = fs_label.read_line ();
+                            if (label.has_prefix ("Core")) {
+                                label = @"$(label_alt++)";
+                            } else if (label == "Package id 0"){
+                                label = "avg";
+                            }
+                        } else {
+                            label = @"$(label_alt++)";
+                        }
+                        ss_data_labels.add (label);
+                    }
+                    label_alt = 0;
+
+                    s_data.insert("labels", ss_data_labels);
+                    s_data.insert("inputs", ss_data_inputs);
+                    _temp_data.data.insert(name, s_data);
+                });
+                if (!ok) return null;
+
+                return _temp_data;
+            } 
+            catch (FileError e) {
+                SharpDebug.fail (e.message);
                 return null;
             }
-            // =======
-            // Sorting 
-            // =======
-            var file_tree = new HashTable<string,HashTable<
-                                        string,
-                                        GenericArray<string>
-                                        >
-                                    >(str_hash,str_equal);
-
-            string s_dirname; while ((s_dirname = dir.read_name()) != null){
-
-                Dir s_dir; try {
-                    if ((s_dir = Dir.open("%s/%s".printf(TEMP_DIR,s_dirname)))
-                        == null ) continue; 
-                } catch (FileError e) {
-                    continue;
-                }
-
-
-                Regex input_regex ; Regex label_regex ; try {
-                    input_regex = new Regex("^temp[0-9]+_input$");
-                    label_regex   = new Regex("^temp[0-9]+_label$");
-                } catch (RegexError e) { return null ;}
-                
-                var s_file_tree = new HashTable<string, GenericArray<string>>
-                    (str_hash,str_equal);
-                var label_files = new GenericArray<string>();
-                var input_files = new GenericArray<string>();
-
-                string ss_dirname;
-                while ((ss_dirname = s_dir.read_name()) != null){
-
-                    if (input_regex.match(ss_dirname)) {
-                        input_files.add("%s".printf(ss_dirname));
-                    } 
-                    else if (label_regex.match(ss_dirname)) {
-                        label_files.add("%s".printf(ss_dirname));
-                    } 
-                }
-                if (input_files.length > 0) {
-                    label_files.sort(strcmp);
-                    input_files.sort(strcmp);
-                    s_file_tree.insert("labels", label_files);
-                    s_file_tree.insert("inputs", input_files);
-                    file_tree.insert(s_dirname, s_file_tree);
-                }
-            }
-            var _temp_data = new TempData(){
-                // Only the keys need to be hashed for fast lookup.
-                data = 
-                    new HashTable<string, HashTable<string, GenericArray<string>>>
-                    (str_hash,str_equal)
-            };
-            
-            // =======
-            // Reading
-            // =======
-            file_tree.foreach((hwmonfile,table)=>{
-                var fs1 = FileStream.open("%s/%s/name".printf(
-                    TEMP_DIR,
-                    hwmonfile
-                    ), "r");
-                if (fs1 == null) return;
-                var name = fs1.read_line();
-
-                // cpu specific stuff (1)
-                Regex cpu_name_regex ; try {
-                    cpu_name_regex = new Regex(
-                        "(cpu_thermal|coretemp|fam15h_power|k10temp)"
-                        ); 
-                } catch (RegexError e) {return;} 
-                if (cpu_name_regex.match(name)) name = "cpu";
-                
-                int alt_label = 0;
-                int core_label = 0;
-                var s_data = new HashTable<string, GenericArray<string>>
-                    (str_hash,str_equal);
-                var ss_data_labels = new GenericArray<string>();
-                var ss_data_inputs = new GenericArray<string>();
-
-                table.lookup("inputs").foreach((inputfile)=>{
-                    var fs2 = FileStream.open("%s/%s/%s".printf(
-                        TEMP_DIR,
-                        hwmonfile,
-                        inputfile
-                    ), "r");
-                    if (fs2 == null) return;
-                    var input = fs2.read_line();
-
-                    string label;
-                    var labelfile = 
-                        "%s_%s".printf(inputfile.split("_")[0],"label");
-                    var fs3 = FileStream.open("%s/%s/%s".printf(
-                        TEMP_DIR,
-                        hwmonfile,
-                        labelfile
-                    ), "r");
-                    if (fs3 == null) {
-                        label = "%d".printf(alt_label); 
-                        alt_label++;
-                    } 
-                    else {
-                        label = fs3.read_line();
-                    }
-
-                    // cpu specific stuff (2)
-                    // * only keep the cores, not sure how portable this is
-                    if (name == "cpu") {
-                        if (! label.has_prefix("Core")){
-                            return;
-                        } else {
-                            label = "%d".printf(core_label);
-                            core_label++;
-                        }
-                    } 
-                    ss_data_inputs.add(input);
-                    ss_data_labels.add(label);
-                });
-
-                // cpu specific stuff (3)
-                if (name == "cpu"){
-                    long total_temp = 0;
-                    int cores = 0;
-                    ss_data_inputs.foreach((i)=>{
-                        cores++;
-                        total_temp += long.parse(i);
-                    });
-                    long avg_temp = total_temp / cores;
-                    ss_data_labels.insert(0, "avg");
-                    ss_data_inputs.insert(0, "%ld".printf(avg_temp));
-                }
-
-                s_data.insert("labels", ss_data_labels);
-                s_data.insert("inputs", ss_data_inputs);
-                _temp_data.data.insert(name, s_data);
-            });
-            return _temp_data;
         }
     }
 }

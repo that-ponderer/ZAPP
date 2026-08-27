@@ -1,3 +1,0 @@
-E 19:46:41.455665            default ../pipewire/spa/plugins/bluez5/upower.c:54:upower_get_percentage_properties_reply: Failed to get percentage from UPower: org.freedesktop.DBus.Error.NameHasNoOwner
-N 19:46:41.470216          wp-device ../wireplumber/lib/wp/device.c:770:wp_spa_device_new_from_spa_factory: SPA handle 'api.libcamera.enum.manager' could not be loaded; is it installed?
-N 19:46:41.470229 s-monitors-libcame enumerate-device.lua:30:chunk: PipeWire's libcamera SPA plugin is missing or broken. Some camera types may not be supported.
