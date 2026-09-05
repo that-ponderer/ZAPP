@@ -42,9 +42,16 @@ rm -f "${PID}"/*
 #====================
 # Sharpshell 
 #====================
-sleep 1 ; "${HELPERS}"/daemonize \
+"${HELPERS}"/daemonize \
     "${PID}"/sharpshell.pid "${LOG}"/sharpshell.log \
     "${ZAPP_PATH}/config/sharpshell/run"
+#====================
+# Notification Center 
+#====================
+"${HELPERS}"/daemonize \
+    "${PID}"/swaync.pid "${LOG}"/swaync.log \
+    swaync -c "${ZAPP_PATH}"/config/swaync/config.json \
+            -s "${ZAPP_PATH}"PP/config/swaync/style.css
 #====================
 # MPD 
 #====================

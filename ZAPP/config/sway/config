@@ -11,9 +11,10 @@ set $RIGHT l
 set $TERM kitty
 set $menu wmenu-run
 set $BROWSER helium-browser
-set $LAUNCHER zsh -c 'drun'
+set $DRUN zsh -c 'drun'
 set $SS_OUTPUT zsh -c "screenshot o"
 set $SS_DYNAMIC zsh -c "screenshot d"
+set $NOTIFICATION_PANEL zsh -c "notification_panel"
 ## colors -----------
 set $COL0	#1e1e2e
 set $COL1   #f38ba8
@@ -177,7 +178,8 @@ bindsym $MOD+c kill
 
 bindsym $MOD+q exec $TERM
 bindsym $MOD+u exec $BROWSER
-bindsym $MOD+space exec $LAUNCHER
+bindsym $MOD+space exec $DRUN
+bindsym $MOD+n exec $NOTIFICATION_PANEL
 
 bindsym Print exec $SS_DYNAMIC
 bindsym Shift+Print exec $SS_OUTPUT

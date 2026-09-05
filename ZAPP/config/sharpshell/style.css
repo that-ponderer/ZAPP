@@ -33,18 +33,13 @@
     font-family: ProFont IIx Nerd Font Propo;
     font-size: 13px;
     font-weight:bold;
-    padding: 1px 0px;
 }
-.test_bounds {
-    border: 2px solid @COL1;
-}
-
 /* ====== */
 /* Topbar */
 /* ====== */
 .topbar {
     background-color: @COL0;
-    padding-bottom: 4px;
+    padding-bottom: 6px;
 }
 .topbar_border {
     background-color: @COL4;
@@ -432,13 +427,16 @@
 }
 .diskio_panel_widget .stack .chunk .graph_kibps,
 .diskio_panel_widget .stack .chunk .graph_iops {
-    margin-top: 2px;
+    margin-top: 4px;
     border: 2px solid @COL8;
     padding-left: 2px;
 }
 /* ------------ */
 /* Tabbed Group */
 /* ------------ */
+.tabbed_widget_panel {
+    margin-top: 4px;
+}
 .tabbed_widget_panel .nav {
     margin-top: 4px;
 }
